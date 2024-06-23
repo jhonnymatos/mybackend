@@ -1,22 +1,32 @@
-import { Repository } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
 import { Appointment } from '../entities/Appointment';
 
 export class AppointmentRepository {
-  private readonly repository: Repository<Appointment>;
+  private repository: Repository<Appointment>;
 
-  constructor(repository: Repository<Appointment>) {
-    this.repository = repository;
+  constructor() {
+    this.repository = getRepository(Appointment);
   }
 
   async save(appointment: Appointment): Promise<Appointment> {
     return this.repository.save(appointment);
   }
 
-  async find(psych_Id: string, status: string): Promise<Appointment[]> {
-    return this.repository.find({ where: { psych_Id, status } });
+  async find(psych_id?: string, status?: string): Promise<Appointment[]> {
+    const query = this.repository.createQueryBuilder('appointment');
+
+    if (psych_id) {
+      query.andWhere('appointment.psych_id = :psych_id', { psych_id });
+    }
+
+    if (status) {
+      query.andWhere('appointment.status = :status', { status });
+    }
+
+    return query.getMany();
   }
 
-  async findById(id: number): Promise<Appointment | null> {
-    return this.repository.findOne({ where: { id } });
+  async findById(id: number): Promise<Appointment | undefined> {
+    return this.repository.findOne(id);
   }
 }
