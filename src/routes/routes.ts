@@ -10,9 +10,19 @@ const routes = Router()
 
 routes.post('/user', new UserController().create)
 routes.post('/userlogin', new UserController().login)
+routes.put('/user/:id', new UserController().updateUser);
+routes.delete('/user/:id', new UserController().deleteUser);
+routes.get('/user/:id', new UserController().getUserById);
+routes.get('/users', new UserController().getAllUsers);
+routes.get('/user/email/:email', new UserController().findUserByEmail);
 
 routes.post('/psych', new PsychController().create)
 routes.post('/psychlogin', new PsychController().login)
+routes.put('/psych/:id', new PsychController().updatePsych);
+routes.delete('/psych/:id', new PsychController().deletePsych);
+routes.get('/psych/:id', new PsychController().getPsychById);
+routes.get('/psychs', new PsychController().getAllPsychs);
+routes.get('/psych/email/:email', new PsychController().findPsychByEmail)
 
 /*routes.post('/forgotpassword', new userPasswordController().forgotPassword)
 routes.put('/reset-password/user/:id/:token', new userPasswordController().resetPassword)
