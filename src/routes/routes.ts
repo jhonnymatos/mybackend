@@ -4,7 +4,7 @@ import { PsychController } from '../controllers/PsychController';
 import { authMiddleware } from '../middlewares/authMiddlewares_User';
 import { EvaluationController } from '../controllers/EvaluationController';
 import { FormsController } from '../controllers/FormsController';
-//import {AppointmentController} from '../controllers/AppointmentController'
+import {AppointmentController} from '../controllers/AppointmentController'
 
 const routes = Router()
 
@@ -38,10 +38,10 @@ routes.get('/forms', new FormsController().getForms)
 routes.get('/forms/:id', new FormsController().getFormById)
 routes.get('/forms/filter/:filter/:value', new FormsController().getFormsByFilter)
 
-/*routes.post('/appointment', new AppointmentController().createAppointment)
-routes.get('/appointment', new AppointmentController().getAppointments)
-routes.get('/appointment/:id', new AppointmentController().getAppointmentById)
-routes.patch('/appointment/:id', new AppointmentController().updateAppointmentStatus)*/
+routes.post('/appointment', new AppointmentController().createAppointment)
+routes.get('/appointment', new AppointmentController().getAppointment)
+routes.get('/appointment/:id', new AppointmentController().getAppointment)
+routes.patch('/appointment/:id', new AppointmentController().updateAppointmentStatus)
 
 routes.use(authMiddleware)
 routes.get('/userprofile', new UserController().getProfile)
