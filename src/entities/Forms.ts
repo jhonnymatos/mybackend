@@ -1,45 +1,45 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
  
-@Entity()
+@Entity('forms')
 class Forms {
   
   @PrimaryGeneratedColumn()
   id: number;
  
-  @Column()
+  @Column({type: 'text'})
   fullName: string;
  
-  @Column()
+  @Column({type: 'text'})
   email: string;
  
-  @Column()
+  @Column({type: 'text'})
   state: string;
  
-  @Column()
+  @Column({type: 'text'})
   crp: string;
  
-  @Column()
+  @Column({type: 'text', nullable: true})
   specialty: string;
  
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'text'})
   specialty2: string | null;
  
-  @Column()
+  @Column({type: 'text'})
   formation: string;
  
-  @Column()
+  @Column({type: 'text'})
   formationArea: string;
  
-  @Column()
+  @Column({type: 'text', nullable: true})
   service: string;
  
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'text'})
   service2: string | null;
  
-  @Column()
+  @Column({type: 'text'})
   shortBio: string;
  
-  @Column()
+  @Column({type: 'text'})
   fullBio: string;
 }
 
