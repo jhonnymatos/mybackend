@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { Evaluation } from "./Evaluation";
+import { Appointment } from "./Appointment";
 
 @Entity('users')
 export class User {
@@ -17,4 +18,7 @@ export class User {
 
     @OneToMany(() => Evaluation, evaluation => evaluation.user)
     evaluations: Evaluation[];
+
+    @OneToMany(() => Appointment, appointment => appointment.user)
+    appointments: Appointment[];
 }

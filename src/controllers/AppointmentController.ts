@@ -1,63 +1,93 @@
 import { Request, Response } from 'express';
 import { AppDataSource } from '../data-source';
 import { Appointment } from '../entities/Appointment';
+import { User } from '../entities/User';
+import { Psych } from '../entities/Psych';
 
 export class AppointmentController {
-  private dataSource: AppDataSource; // Declarar dataSource como tipo AppDataSource
+    async create(request: Request, response: Response): Promise<Response> {
+        const { userId, psychId, name, email, phone, reason } = request.body;
 
-  constructor(dataSource: AppDataSource) {
-    this.dataSource = dataSource; // Inicializar o dataSource com um serviço de DataSource adequado
-  }
+        const userRepository = AppDataSource.getRepository(User);
+        const psychRepository = AppDataSource.getRepository(Psych);
+        const appointmentRepository = AppDataSource.getRepository(Appointment);
 
-  // Criação de Consulta
-  public createAppointment = async (req: Request, res: Response): Promise<void> => {
-    const { name, email, phone, reason, psychId, userId } = req.body;
-    const appointmentRepository = this.dataSource.getRepository(Appointment);
-    const appointment = appointmentRepository.create({ name, email, phone, reason, status: 'pendente', psych: { id: psychId }, user: { id: userId } });
-    await appointmentRepository.save(appointment);
-    res.status(201).send({ message: 'Consulta criada com sucesso!' });
-  };
+        try {
+            const user = await userRepository.findOneBy({ id: userId });
+            const psych = await psychRepository.findOneBy({ id: psychId });
 
-  // Listagem de Consultas
-  public listAppointments = async (req: Request, res: Response): Promise<void> => {
-    const psychId = req.query.psych_id as string;
-    const appointmentRepository = this.dataSource.getRepository(Appointment);
-    const query = appointmentRepository.createQueryBuilder('appointment');
+            if (!user || !psych) {
+                return response.status(404).json({ message: 'User or Psych not found' });
+            }
 
-    if (psychId) {
-      query.andWhere('appointment.psych_id = :psych_id', { psych_id: psychId });
+            const appointment = new Appointment();
+            appointment.name = name;
+            appointment.email = email;
+            appointment.phone = phone;
+            appointment.reason = reason;
+            appointment.status = 'pending';
+            appointment.user = user;
+            appointment.psych = psych;
+
+            await appointmentRepository.save(appointment);
+
+            return response.status(201).json(appointment);
+        } catch (error) {
+            return response.status(500).json({ message: 'Error creating appointment', error });
+        }
     }
 
-    query.andWhere('appointment.status = :status', { status: 'pendente' });
+    async approve(request: Request, response: Response): Promise<Response> {
+        const { id } = request.params;
+        const appointmentRepository = AppDataSource.getRepository(Appointment);
 
-    const appointments = await query.getMany();
-    res.send(appointments);
-  };
+        try {
+            const appointment = await appointmentRepository.findOneBy({ id: parseInt(id) });
 
-  // Visualização de Consulta
-  public getAppointment = async (req: Request, res: Response): Promise<void> => {
-    const id = parseInt(req.params.id, 10);
-    const appointmentRepository = this.dataSource.getRepository(Appointment);
-    const appointment = await appointmentRepository.findOne(id);
-    if (!appointment) {
-      res.status(404).send({ message: 'Consulta não encontrada!' });
-    } else {
-      res.send(appointment);
+            if (!appointment) {
+                return response.status(404).json({ message: 'Appointment not found' });
+            }
+
+            appointment.status = 'approved';
+
+            await appointmentRepository.save(appointment);
+
+            return response.status(200).json(appointment);
+        } catch (error) {
+            return response.status(500).json({ message: 'Error approving appointment', error });
+        }
     }
-  };
 
-  // Atualização de Status
-  public updateAppointmentStatus = async (req: Request, res: Response): Promise<void> => {
-    const id = parseInt(req.params.id, 10);
-    const { status } = req.body;
-    const appointmentRepository = this.dataSource.getRepository(Appointment);
-    const appointment = await appointmentRepository.findOne(id);
-    if (!appointment) {
-      res.status(404).send({ message: 'Consulta não encontrada!' });
-    } else {
-      appointment.status = status;
-      await appointmentRepository.save(appointment);
-      res.send({ message: `Status da consulta atualizado para ${status}!` });
+    async reject(request: Request, response: Response): Promise<Response> {
+        const { id } = request.params;
+        const appointmentRepository = AppDataSource.getRepository(Appointment);
+
+        try {
+            const appointment = await appointmentRepository.findOneBy({ id: parseInt(id) });
+
+            if (!appointment) {
+                return response.status(404).json({ message: 'Appointment not found' });
+            }
+
+            appointment.status = 'rejected';
+
+            await appointmentRepository.save(appointment);
+
+            return response.status(200).json(appointment);
+        } catch (error) {
+            return response.status(500).json({ message: 'Error rejecting appointment', error });
+        }
     }
-  };
+
+    async getPsychAppointments(request: Request, response: Response): Promise<Response> {
+        const { psychId } = request.params;
+        const appointmentRepository = AppDataSource.getRepository(Appointment);
+
+        try {
+            const appointments = await appointmentRepository.find({ where: { psych: { id: parseInt(psychId) } } });
+            return response.status(200).json(appointments);
+        } catch (error) {
+            return response.status(500).json({ message: 'Error fetching appointments', error });
+        }
+    }
 }
