@@ -1,4 +1,4 @@
-import { getRepository, Repository } from 'typeorm';
+/*import { getRepository, Repository } from 'typeorm';
 import { Appointment } from '../entities/Appointment';
 
 export class AppointmentRepository {
@@ -29,4 +29,4 @@ export class AppointmentRepository {
   async findById(id: number): Promise<Appointment | undefined> {
     return this.repository.findOne(id);
   }
-}
+}*/

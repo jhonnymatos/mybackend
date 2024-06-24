@@ -1,47 +1,71 @@
 import { Request, Response } from 'express';
-import { userRepository } from '../repositories/UserRepository';
-import { psychRepository } from '../repositories/psychRepository';
-import { evaluationRepository } from '../repositories/evaluationRepository';
+import { AppDataSource } from '../data-source';
+import { Evaluation } from '../entities/Evaluation';
+import { User } from '../entities/User';
+import { Psych } from '../entities/Psych';
 
 export class EvaluationController {
-  async create(req: Request, res: Response) {
-    const { rating, review, psychId, userId } = req.body;
+    async create(req: Request, res: Response): Promise<Response> {
+        const { userId, psychId, rating, comment } = req.body;
 
-    try {
-      const user = await userRepository.findOneBy({ id: Number(userId) });
-      const psych = await psychRepository.findOneBy({ id: Number(psychId) });
+        try {
+            const evaluationRepository = AppDataSource.getRepository(Evaluation);
+            const userRepository = AppDataSource.getRepository(User);
+            const psychRepository = AppDataSource.getRepository(Psych);
 
-      if (!user) {
-        return res.status(404).json({ message: 'Usuário não encontrado' });
-      }
+            console.log('Fetching user and psych data');
+            const user = await userRepository.findOne({ where: { id: userId } });
+            const psych = await psychRepository.findOne({ where: { id: psychId } });
 
-      if (!psych) {
-        return res.status(404).json({ message: 'Psicólogo não encontrado' });
-      }
+            if (!user) {
+                console.error(`User with ID ${userId} not found`);
+                return res.status(404).json({ message: 'User not found' });
+            }
+            if (!psych) {
+                console.error(`Psych with ID ${psychId} not found`);
+                return res.status(404).json({ message: 'Psych not found' });
+            }
 
-      const newEvaluation = evaluationRepository.create({ rating, review, user, psych });
-      await evaluationRepository.save(newEvaluation);
+            const evaluation = new Evaluation();
+            evaluation.user = user;
+            evaluation.psych = psych;
+            evaluation.rating = rating;
+            evaluation.comment = comment;
+            evaluation.date = new Date();
 
-      return res.status(201).json(newEvaluation);
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({ message: 'Erro interno do servidor' });
+            console.log('Saving evaluation');
+            await evaluationRepository.save(evaluation);
+
+            return res.status(201).json(evaluation);
+        } catch (error) {
+            console.error('Error saving evaluation', error);
+            return res.status(500).json({ message: 'Internal server error', error });
+        }
     }
-  }
 
-  async list(req: Request, res: Response) {
-    const { psychId } = req.params;
+    async list(req: Request, res: Response): Promise<Response> {
+        const { psychologistId } = req.params;
 
-    try {
-      const evaluations = await evaluationRepository.find({
-        where: { psych: { id: Number(psychId) } },
-        relations: ['user', 'psych'],
-      });
+        try {
+            const evaluationRepository = AppDataSource.getRepository(Evaluation);
 
-      return res.json(evaluations);
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({ message: 'Erro interno do servidor' });
+            console.log(`Fetching evaluations for psychologist ID ${psychologistId}`);
+            const evaluations = await evaluationRepository.find({
+                where: { psych: { id: Number(psychologistId) } },
+                relations: ['user']
+            });
+
+            const response = evaluations.map(evaluation => ({
+                rating: evaluation.rating,
+                comment: evaluation.comment,
+                date: evaluation.date,
+                user: evaluation.user.name
+            }));
+
+            return res.status(200).json(response);
+        } catch (error) {
+            console.error('Error fetching evaluations', error);
+            return res.status(500).json({ message: 'Internal server error', error });
+        }
     }
-  }
 }

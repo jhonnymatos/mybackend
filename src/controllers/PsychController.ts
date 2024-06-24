@@ -4,7 +4,6 @@ import { BadRequestError } from '../helpers/api-errors';
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
-
 export class PsychController {
 	async create(req: Request, res: Response) {
 		const { name, email, password, phone, crp, state } = req.body
@@ -91,65 +90,5 @@ export class PsychController {
 		const { password: _, ...psych } = newPsych;
 	
 		return res.status(201).json(psych);
-	  }
-	
-	  async updatePsych(req: Request, res: Response) {
-		const { id, name, email, password, phone, crp, state } = req.body;
-	
-		const existingPsych = await psychRepository.findOneBy({ id });
-		if (!existingPsych) {
-		  throw new BadRequestError('Psicólogo não encontrado');
-		}
-	
-		existingPsych.name = name;
-		existingPsych.email = email;
-		if (password) {
-		  existingPsych.password = await bcrypt.hash(password, 10);
-		}
-		existingPsych.phone = phone;
-		existingPsych.crp = crp;
-		existingPsych.state = state;
-	
-		await psychRepository.save(existingPsych);
-	
-		const { password: _, ...updatedPsych } = existingPsych;
-		return res.json(updatedPsych);
-	  }
-	
-	  async deletePsych(req: Request, res: Response) {
-		const psychId = parseInt(req.params.id);
-	
-		const existingPsych = await psychRepository.findOneBy({ id: psychId });
-		if (!existingPsych) {
-		  throw new BadRequestError('Psicólogo não encontrado');
-		}
-	
-		await psychRepository.remove(existingPsych);
-		return res.status(200).json({ message: 'Psicólogo excluído com sucesso' });
-	  }
-	
-	  async getPsychById(req: Request, res: Response) {
-		const psychId = parseInt(req.params.id);
-	
-		const psych = await psychRepository.findOneBy({ id: psychId });
-		if (!psych) {
-		  throw new BadRequestError('Psicólogo não encontrado');
-		}
-		return res.json(psych);
-	  }
-	
-	  async getAllPsychs(req: Request, res: Response) {
-		const psychs = await psychRepository.find();
-		return res.json(psychs);
-	  }
-	
-	  async findPsychByEmail(req: Request, res: Response) {
-		const { email } = req.params;
-	
-		const psych = await psychRepository.findOneBy({ email });
-		if (!psych) {
-		  throw new BadRequestError('Psicólogo não encontrado');
-		}
-		return res.json(psych);
 	  }
 }
