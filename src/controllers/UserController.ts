@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
-import { userRepository } from '../repositories/userRepository';
-import { BadRequestError } from '../helpers/api-errors';
-import { AppDataSource } from '../data-source';
-import { User } from '../entities/User';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import { Request, Response } from 'express'
+import { userRepository } from '../repositories/userRepository'
+import { BadRequestError } from '../helpers/api-errors'
+import { AppDataSource } from '../data-source'
+import { User } from '../entities/User'
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 export class UserController {
   async create(req: Request, res: Response) {

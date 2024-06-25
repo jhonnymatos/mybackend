@@ -8,7 +8,7 @@ export class Evaluation{
     id: number
     
     @Column({ type: 'integer' })
-    rating: number;
+    rating: number
 
     @Column({type: 'text'})
     comment: string

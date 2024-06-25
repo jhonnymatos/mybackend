@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
-import { AppDataSource } from '../data-source';
-import { Appointment } from '../entities/Appointment';
-import { User } from '../entities/User';
-import { Psych } from '../entities/Psych';
+import { Request, Response } from 'express'
+import { AppDataSource } from '../data-source'
+import { Appointment } from '../entities/Appointment'
+import { User } from '../entities/User'
+import { Psych } from '../entities/Psych'
 
 export class AppointmentController {
     async create(request: Request, response: Response): Promise<Response> {

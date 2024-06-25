@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import { AppDataSource } from '../../src/data-source';
-import Forms from '../entities/Forms';
+import { Request, Response } from 'express'
+import { AppDataSource } from '../../src/data-source'
+import Forms from '../entities/Forms'
 
 export class FormsController {
   private formsRepository = AppDataSource.getRepository(Forms);
@@ -35,17 +35,6 @@ export class FormsController {
       }
     } catch (error) {
       res.status(500).json({ message: 'Erro ao buscar formulário' });
-    }
-  }
-
-  async getFormsByFilter(req: Request, res: Response) {
-    const filter = req.params.filter;
-    const value = req.params.value;
-    try {
-      const forms = await this.formsRepository.findBy({ [filter]: value });
-      res.json(forms);
-    } catch (error) {
-      res.status(500).json({ message: 'Erro ao buscar formulários' });
     }
   }
 }

@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
-import { AppDataSource } from '../data-source';
-import { Evaluation } from '../entities/Evaluation';
-import { User } from '../entities/User';
-import { Psych } from '../entities/Psych';
+import { Request, Response } from 'express'
+import { AppDataSource } from '../data-source'
+import { Evaluation } from '../entities/Evaluation'
+import { User } from '../entities/User'
+import { Psych } from '../entities/Psych'
 
 export class EvaluationController {
     async create(req: Request, res: Response): Promise<Response> {

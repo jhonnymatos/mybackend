@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
-import { psychRepository } from '../repositories/psychRepository';
-import { BadRequestError } from '../helpers/api-errors';
-import { AppDataSource } from '../data-source';
-import { Psych } from '../entities/Psych';
+import { Request, Response } from 'express'
+import { psychRepository } from '../repositories/psychRepository'
+import { BadRequestError } from '../helpers/api-errors'
+import { AppDataSource } from '../data-source'
+import { Psych } from '../entities/Psych'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
