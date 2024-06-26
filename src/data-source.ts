@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import 'reflect-metadata'
-import { DataSource } from "typeorm";
+import { DataSource } from "typeorm"
 
 const port = process.env.DB_5432 as number | undefined
 

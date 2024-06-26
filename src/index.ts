@@ -1,8 +1,8 @@
-import 'reflect-metadata';
-import express from 'express';
-import cors from 'cors';
-import routes from './routes/routes';
-import { AppDataSource } from './data-source';
+import 'reflect-metadata'
+import express from 'express'
+import cors from 'cors'
+import routes from './routes/routes'
+import { AppDataSource } from './data-source'
 
 const app = express();
 

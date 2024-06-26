@@ -1,13 +1,13 @@
-import { NextFunction, Request, Response  } from "express";
-import { UnauthorizedError } from "../helpers/api-errors";
-import { userRepository } from '../repositories/userRepository';
+import { NextFunction, Request, Response  } from 'express'
+import { UnauthorizedError } from '../helpers/api-errors'
+import { userRepository } from '../repositories/userRepository'
 import jwt from 'jsonwebtoken'
 
 type JwtPayload = {
 	id: number
 }
 
-export const authMiddleware = async (
+export const authMiddlewareUser = async (
     req: Request, 
     res: Response, 
     next: NextFunction

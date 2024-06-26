@@ -68,14 +68,14 @@ export class PsychController {
 	}
 
 	async updatePsych(req: Request, res: Response) {
-		const { id } = req.user;
+		const { id } = req.psych;
 		const { name, email, phone, crp, state } = req.body;
 	
 		try {
 		  const psychRepository = AppDataSource.getRepository(Psych);
 		  const psych = await psychRepository.findOneBy({ id });
 		  if (!psych) {
-			return res.status(404).send({ error: 'Psych not found' });
+			return res.status(404).send({ error: 'Psych nao encontrado' });
 		  }
 	
 		  psych.name = name ?? psych.name;
@@ -92,12 +92,12 @@ export class PsychController {
 	  }
 	
 	  async deletePsych(req: Request, res: Response) {
-		const { id } = req.user;
+		const { id } = req.psych;
 	
 		try {
 		  const psychRepository = AppDataSource.getRepository(Psych);
 		  await psychRepository.delete({ id });
-		  res.send({ message: 'Psych deleted successfully' });
+		  res.send({ message: 'Psych excluído com sucesso' });
 		} catch (error) {
 		  res.status(500).send({ error: 'Error deleting psych' });
 		}
