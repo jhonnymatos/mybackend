@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('forms')
-class Forms {
+export class Forms {
 
   @PrimaryGeneratedColumn()
   id: number;
@@ -66,5 +66,3 @@ class Forms {
   @Column({type: 'text'})
   fullBio: string;
 }
-
-export default Forms;
